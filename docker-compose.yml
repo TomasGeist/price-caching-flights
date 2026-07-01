@@ -1,0 +1,33 @@
+services:
+
+  redis:
+      image: redis:alpine
+      container_name: redis_flights_caching
+      ports:
+        - "6379:6379"
+      restart: always
+      volumes:
+        - redis-data:/data
+      networks: 
+        - app-network-new
+  api:
+      build:
+        context: .
+      container_name: caching-flights-api
+      depends_on:
+        - redis
+      volumes:
+        - .:/usr/src/app
+        - /usr/src/app/node_modules
+      ports:
+        - "3000:3000"
+      networks:
+        - app-network-new
+
+networks:
+  app-network-new:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data: 
